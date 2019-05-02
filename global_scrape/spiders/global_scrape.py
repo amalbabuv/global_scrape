@@ -10,10 +10,10 @@ class Global(scrapy.Spider):
 	
 	start_urls = ["https://www.globaltrade.net/United-States/expert-service-provider.html"]
 
-	npages = 2
+	npages = 3
 
 	 
-	for i in range(2, npages + 2):
+	for i in range(npages):
 		start_urls.append("https://www.globaltrade.net/United-States/expert-service-provider.html?pageSize=10&orderBy=1&filterByPost=false&filterByRef=false&topicClear=false&industryClear=false&currentPage="+str(i)+"")
 	
 
@@ -41,19 +41,21 @@ class Global(scrapy.Spider):
 		item['sub_title'] = response.xpath('//h4/span[contains(@class, "sub")]/text()').extract()[0]
 
 
-		item['primary_location'] = response.xpath('//span[@itemprop = "addressLocality"]/text()').extract()[0]
+		
+		item['primary_location'] = response.xpath('//span[@itemprop = "addressLocality"]/text()').extract()[0].replace('\n',' ')
 
+		
+		item['area_of_expertise'] = response.xpath('//a[contains(@class, "mainExp")]/text()').extract()[0].replace('\n',' ')
 
-		item['area_of_expertise'] = response.xpath('//a[contains(@class, "mainExp")]/text()').extract()[0]
-
-
+		#temp3 = 
 		item['about'] = response.xpath('//td/p/text()').extract()
 
+		 
+		item['website']  = response.xpath('//td/a/text()').extract()[1].replace('\n',' ')
 
-		item['website']  = response.xpath('//td/a/text()').extract()[1]
 
-
-		#item['language_spoken'] = response.xpath('//div[contains(@class,"section details")]/table/tr/td').extract()[9]
+		 
+		item['language_spoken'] = response.xpath('//div[contains(@class,"section details")]/table/tr/td/text()').extract()[15].replace('\n',' ')
 
 
 		item['page_url'] = response.xpath("//meta[@property='og:url']/@content").extract()
